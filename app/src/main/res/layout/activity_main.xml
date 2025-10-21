@@ -22,9 +22,8 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Contenu -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/appcontent"
+    <!-- Scroll view si écran trop petit -->
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/appbarlayout"
@@ -32,17 +31,478 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- CHANGE ME -->
-        <TextView
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/appcontent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/welcome"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:padding="16dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
+            <!--                              Données de base                                    -->
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
 
+            <!-- Titre -->
+            <TextView
+                android:id="@+id/baseTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_base_title"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingVertical="8dp"
+                android:textAllCaps="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Ligne guide verticale pour aligner titre et input -->
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/verticalGuideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.4" />
+
+            <!-- Nom -->
+            <TextView
+                android:id="@+id/lastNameLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_base_name_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintTop_toBottomOf="@id/baseTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+                app:layout_constraintBaseline_toBaselineOf="@id/lastNameField" />
+
+            <EditText
+                android:id="@+id/lastNameField"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:inputType="textCapWords"
+                android:imeOptions="actionNext"
+                android:layout_marginTop="8dp"
+                android:hint="@string/hint_last_name"
+                app:layout_constraintTop_toBottomOf="@id/baseTitle"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Prénom -->
+            <TextView
+                android:id="@+id/firstNameLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_base_firstname_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintTop_toBottomOf="@id/lastNameField"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+                app:layout_constraintBaseline_toBaselineOf="@id/firstNameField" />
+
+            <EditText
+                android:id="@+id/firstNameField"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:inputType="textCapWords"
+                android:imeOptions="actionNext"
+                android:layout_marginTop="8dp"
+                android:hint="@string/hint_first_name"
+                app:layout_constraintTop_toBottomOf="@id/lastNameField"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Date de naissance -->
+            <TextView
+                android:id="@+id/birthdayLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_base_birthdate_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintTop_toBottomOf="@id/firstNameField"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+                app:layout_constraintBaseline_toBaselineOf="@id/birthdayField" />
+
+            <EditText
+                android:id="@+id/birthdayField"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:inputType="none"
+                android:layout_marginTop="8dp"
+                android:hint="@string/hint_date"
+                app:layout_constraintTop_toBottomOf="@id/firstNameField"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toStartOf="@id/birthdayBtn" />
+
+            <ImageButton
+                android:id="@+id/birthdayBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/cake"
+                android:contentDescription="@string/main_base_birthdate_title"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="@id/birthdayField"
+                app:layout_constraintBottom_toBottomOf="@id/birthdayField"
+                app:layout_constraintStart_toEndOf="@id/birthdayField"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Nationalité -->
+            <TextView
+                android:id="@+id/nationalityLabel"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/main_base_nationality_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintTop_toTopOf="@id/nationalitySpinner"
+                app:layout_constraintBottom_toBottomOf="@id/nationalitySpinner"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline" />
+
+            <Spinner
+                android:id="@+id/nationalitySpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/birthdayField"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Occupation -->
+            <TextView
+                android:id="@+id/occupationLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_base_occupation_title"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/nationalitySpinner"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <RadioGroup
+                android:id="@+id/occupationRadioGroup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/occupationLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <RadioButton
+                    android:id="@+id/studentChoice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/main_base_occupation_student" />
+
+                <RadioButton
+                    android:id="@+id/workerChoice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/main_base_occupation_worker" />
+            </RadioGroup>
+
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
+            <!--                             Données étudiants                                   -->
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
+
+            <!-- Titre -->
+            <TextView
+                android:id="@+id/studentTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_specific_students_title"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingVertical="8dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:textAllCaps="true"
+                app:layout_constraintTop_toBottomOf="@id/occupationRadioGroup"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- École/Université -->
+            <TextView
+                android:id="@+id/universityLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_specific_school_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/studentTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+                app:layout_constraintBaseline_toBaselineOf="@id/universityField" />
+
+            <EditText
+                android:id="@+id/universityField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:imeOptions="actionNext"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/studentTitle"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Année du diplôme -->
+            <TextView
+                android:id="@+id/gradYearLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_specific_graduationyear_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/universityField"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+                app:layout_constraintBaseline_toBaselineOf="@id/gradYearField" />
+
+            <EditText
+                android:id="@+id/gradYearField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:imeOptions="actionNext"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/universityField"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
+            <!--                             Données employés                                    -->
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
+
+            <!-- Titre -->
+            <TextView
+                android:id="@+id/workerTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_specific_workers_title"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingVertical="8dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:textAllCaps="true"
+                app:layout_constraintTop_toBottomOf="@id/occupationRadioGroup"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Enterprise -->
+            <TextView
+                android:id="@+id/companyLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_specific_compagny_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/workerTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+                app:layout_constraintBaseline_toBaselineOf="@id/companyField" />
+
+            <EditText
+                android:id="@+id/companyField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:imeOptions="actionNext"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/workerTitle"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Secteur -->
+            <TextView
+                android:id="@+id/sectorLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_specific_sector_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/companyField"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+                app:layout_constraintBaseline_toBaselineOf="@id/sectorSpinner" />
+
+            <Spinner
+                android:id="@+id/sectorSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/companyField"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Expérience (années) -->
+            <TextView
+                android:id="@+id/experienceLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/main_specific_experience_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/sectorSpinner"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+                app:layout_constraintBaseline_toBaselineOf="@id/experienceField" />
+
+            <EditText
+                android:id="@+id/experienceField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:imeOptions="actionNext"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/sectorSpinner"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
+            <!--                          Données complémentaires                                -->
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
+
+            <!-- Titre -->
+            <TextView
+                android:id="@+id/additionalTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/additional_title"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingVertical="8dp"
+                android:layout_marginTop="16dp"
+                android:textAllCaps="true"
+                app:layout_constraintTop_toBottomOf="@id/gradYearField"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Email -->
+            <TextView
+                android:id="@+id/emailLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/additional_email_title"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintTop_toBottomOf="@id/additionalTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/verticalGuideline"
+                app:layout_constraintBaseline_toBaselineOf="@id/emailField" />
+
+            <EditText
+                android:id="@+id/emailField"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:inputType="textEmailAddress"
+                android:imeOptions="actionNext"
+                android:layout_marginTop="8dp"
+                android:hint="@string/hint_email"
+                app:layout_constraintTop_toBottomOf="@id/additionalTitle"
+                app:layout_constraintStart_toEndOf="@id/verticalGuideline"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Commentaires -->
+            <TextView
+                android:id="@+id/commentLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/additional_remarks_title"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/emailField"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <EditText
+                android:id="@+id/commentField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine|textCapSentences"
+                android:minLines="3"
+                android:gravity="top|start"
+                android:imeOptions="actionDone"
+                android:layout_marginTop="24dp"
+                android:hint="@string/hint_comment"
+                app:layout_constraintTop_toBottomOf="@id/emailField"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
+            <!--                                  Boutons                                        -->
+            <!-- /////////////////////////////////////////////////////////////////////////////// -->
+
+            <!-- Cancel -->
+            <Button
+                android:id="@+id/cancelBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_cancel"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                app:layout_constraintTop_toBottomOf="@id/commentField"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/okBtn"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <!-- OK -->
+            <Button
+                android:id="@+id/okBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_ok"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toBottomOf="@id/commentField"
+                app:layout_constraintStart_toEndOf="@id/cancelBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -79,5 +79,10 @@
 
     <string name="btn_cancel">@android:string/cancel</string>
     <string name="btn_ok">@android:string/ok</string>
+    <string name="hint_first_name">e.g John</string>
+    <string name="hint_last_name">e.g Smith</string>
+    <string name="hint_date">e.g 01/01/2000</string>
+    <string name="hint_email">e.g john.smith@gmail.com</string>
+    <string name="hint_comment">Commentaires supplémentaires</string>
 
 </resources>

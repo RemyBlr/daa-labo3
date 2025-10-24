@@ -1,4 +1,4 @@
-package ch.heigvd.iict.daa.template
+package ch.heigvd.iict.daa.labo3
 
 import java.text.DateFormat
 import java.util.*

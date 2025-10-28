@@ -17,12 +17,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.get
+import android.util.Log
 
 import ch.heigvd.iict.daa.labo3.*;
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
 
-    private var person : Person? = null;
+    private var person: Person? = null;
 
     // Common fields
     private lateinit var nameField: EditText
@@ -69,7 +72,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         initViews();
-
         onLoad();
     }
 
@@ -91,16 +93,20 @@ class MainActivity : AppCompatActivity() {
         cancelBtn = findViewById(R.id.cancelBtn)
         okBtn = findViewById(R.id.okBtn)
 
+        Log.d("Init", "Init view data");
+
         // Setup listeners
         cancelBtn.setOnClickListener { onCancel(); }
         okBtn.setOnClickListener { onValidate(); }
+
         workerChoice.setOnCheckedChangeListener { view, isChecked -> showWorkerFields() }
         studentChoice.setOnCheckedChangeListener { view, isChecked -> showStudentFields() }
     }
 
     // Load existing data into the Form (if any)
     fun onLoad() {
-        if(person === null) { return; } // No data to load
+        if (person === null) {
+            return; } // No data to load
 
         nameField.setText(person?.name);
         firstNameField.setText(person?.firstName);
@@ -114,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             companyField.setText(worker.company);
             //sectorSpinner.setSelection(worker.sector);
             experienceField.setText(worker.experienceYear);
-        } else if(studentChoice.isChecked) {
+        } else if (studentChoice.isChecked) {
             var student = person as Student;
             universityField.setText(student.university);
             gradYearField.setText(student.graduationYear);
@@ -141,6 +147,8 @@ class MainActivity : AppCompatActivity() {
 
     // Empty Form fields
     fun onCancel() {
+        Log.d("MainActivity", "Emptying data from Form");
+
         nameField.setText("")
         firstNameField.setText("")
         birthdayField.setText("")
@@ -158,8 +166,56 @@ class MainActivity : AppCompatActivity() {
 
     // Display log of Person
     fun onValidate() {
-        // if(isWorker) {
-        // person = new Worker()...
-        // } else { person = new Student()...
+        Log.d("MainActivity", "Validating data from Form");
+        if (!workerChoice.isChecked && !studentChoice.isChecked) return; // No valid selection
+
+        var name: String = nameField.getText().toString();
+        var firstname: String = firstNameField.getText().toString();
+//        var birthday: Calendar = birthdayField.getDate();
+        var nationality: String = nationalitySpinner.selectedItem.toString()
+        var email: String = emailField.getText().toString();
+        var comment: String = commentField.getText().toString();
+
+        if (workerChoice.isChecked) {
+            var company: String = companyField.getText().toString();
+            var sector: String = sectorSpinner.selectedItem.toString();
+//            var experience: Int = experienceField.getText().toInt();
+
+            person = Worker(
+                name,
+                firstname,
+                Calendar.getInstance().apply {
+                    set(Calendar.YEAR, 1998)
+                    set(Calendar.MONTH, Calendar.APRIL)
+                    set(Calendar.DAY_OF_MONTH, 8)
+                },
+                nationality,
+                company,
+                sector,
+                2,
+                email,
+                comment
+            );
+        } else if (studentChoice.isChecked) {
+            var university: String = universityField.getText().toString();
+//            var gradyear: Int = gradYearField.getText().toInt();
+
+            person = Student(
+                name,
+                firstname,
+                Calendar.getInstance().apply {
+                    set(Calendar.YEAR, 1998)
+                    set(Calendar.MONTH, Calendar.APRIL)
+                    set(Calendar.DAY_OF_MONTH, 8)
+                },
+                nationality,
+                university,
+                2,
+                email,
+                comment
+            );
+        }
+
+        Log.d("MainActivity", person.toString());
     }
 }

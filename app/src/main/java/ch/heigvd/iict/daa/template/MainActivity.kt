@@ -17,12 +17,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.get
 import android.util.Log
+import android.widget.ArrayAdapter
 
-import ch.heigvd.iict.daa.labo3.*;
 import java.util.Calendar
 
+import java.text.SimpleDateFormat
+import java.util.Locale
 class MainActivity : AppCompatActivity() {
 
     private var person: Person? = null;
@@ -81,12 +82,32 @@ class MainActivity : AppCompatActivity() {
         firstNameField = findViewById(R.id.firstNameField)
         birthdayField = findViewById(R.id.birthdayField)
         nationalitySpinner = findViewById(R.id.nationalitySpinner)
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.nationalities,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears.
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner.
+            nationalitySpinner.adapter = adapter
+        }
         emailField = findViewById(R.id.emailField)
         commentField = findViewById(R.id.commentField)
-        workerChoice = findViewById(R.id.studentChoice)
-        studentChoice = findViewById(R.id.workerChoice)
+        workerChoice = findViewById(R.id.workerChoice)
+        studentChoice = findViewById(R.id.studentChoice)
         companyField = findViewById(R.id.companyField)
         sectorSpinner = findViewById(R.id.sectorSpinner)
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.sectors,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears.
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner.
+            sectorSpinner.adapter = adapter
+        }
         experienceField = findViewById(R.id.experienceField)
         universityField = findViewById(R.id.universityField)
         gradYearField = findViewById(R.id.gradYearField)
@@ -99,14 +120,13 @@ class MainActivity : AppCompatActivity() {
         cancelBtn.setOnClickListener { onCancel(); }
         okBtn.setOnClickListener { onValidate(); }
 
-        workerChoice.setOnCheckedChangeListener { view, isChecked -> showWorkerFields() }
-        studentChoice.setOnCheckedChangeListener { view, isChecked -> showStudentFields() }
+        workerChoice.setOnCheckedChangeListener { view, isChecked -> if(isChecked) showWorkerFields() }
+        studentChoice.setOnCheckedChangeListener { view, isChecked -> if(isChecked) showStudentFields() }
     }
 
     // Load existing data into the Form (if any)
     fun onLoad() {
-        if (person === null) {
-            return; } // No data to load
+        if (person == null) return; // No data to load
 
         nameField.setText(person?.name);
         firstNameField.setText(person?.firstName);
@@ -115,15 +135,17 @@ class MainActivity : AppCompatActivity() {
         emailField.setText(person?.email);
         commentField.setText(person?.remark)
 
-        if (workerChoice.isChecked) {
-            var worker = person as Worker;
+        if (person is Worker) {
+            workerChoice.isChecked = true
+            val worker = person as Worker;
             companyField.setText(worker.company);
             //sectorSpinner.setSelection(worker.sector);
-            experienceField.setText(worker.experienceYear);
-        } else if (studentChoice.isChecked) {
-            var student = person as Student;
+            experienceField.setText(worker.experienceYear.toString());
+        } else if (person is Student) {
+            studentChoice.isChecked = true
+            val student = person as Student;
             universityField.setText(student.university);
-            gradYearField.setText(student.graduationYear);
+            gradYearField.setText(student.graduationYear.toString());
         }
     }
 
@@ -147,7 +169,7 @@ class MainActivity : AppCompatActivity() {
 
     // Empty Form fields
     fun onCancel() {
-        Log.d("MainActivity", "Emptying data from Form");
+        Log.d("Cancel", "Emptying data from Form");
 
         nameField.setText("")
         firstNameField.setText("")
@@ -166,56 +188,79 @@ class MainActivity : AppCompatActivity() {
 
     // Display log of Person
     fun onValidate() {
-        Log.d("MainActivity", "Validating data from Form");
-        if (!workerChoice.isChecked && !studentChoice.isChecked) return; // No valid selection
+        val name = nameField.text.toString()
+        if (name.isBlank()) {
+            nameField.error = "Name cannot be empty"
+            return;
+        }
 
-        var name: String = nameField.getText().toString();
-        var firstname: String = firstNameField.getText().toString();
-//        var birthday: Calendar = birthdayField.getDate();
-        var nationality: String = nationalitySpinner.selectedItem.toString()
-        var email: String = emailField.getText().toString();
-        var comment: String = commentField.getText().toString();
+        val firstname = firstNameField.text.toString()
+        if (firstname.isBlank()) {
+            firstNameField.error = "First name cannot be empty"
+            return;
+        }
+
+        val birthdayStr = birthdayField.text.toString()
+        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        format.isLenient = false 
+        val birthday: Calendar = Calendar.getInstance()
+        try {
+            val date = format.parse(birthdayStr)
+            if (date != null) {
+                birthday.time = date
+            } else {
+                birthdayField.error = "Invalid date format (dd/MM/yyyy)"
+                return;
+            }
+        } catch (e: Exception) {
+            birthdayField.error = "Invalid date format (dd/MM/yyyy)"
+            return;
+        }
+
+
+        val email = emailField.text.toString()
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailField.error = "Invalid email address";
+            return;
+        }
+
+        if (!workerChoice.isChecked && !studentChoice.isChecked) { return; }
+
+        val nationality: String = nationalitySpinner.selectedItem.toString();
+        val comment: String = commentField.text.toString();
 
         if (workerChoice.isChecked) {
             var company: String = companyField.getText().toString();
             var sector: String = sectorSpinner.selectedItem.toString();
-//            var experience: Int = experienceField.getText().toInt();
+            var experience: Int = experienceField.getText().toString().toIntOrNull() ?: 0;
 
             person = Worker(
                 name,
                 firstname,
-                Calendar.getInstance().apply {
-                    set(Calendar.YEAR, 1998)
-                    set(Calendar.MONTH, Calendar.APRIL)
-                    set(Calendar.DAY_OF_MONTH, 8)
-                },
+                birthday,
                 nationality,
                 company,
                 sector,
-                2,
+                experience,
                 email,
                 comment
             );
         } else if (studentChoice.isChecked) {
             var university: String = universityField.getText().toString();
-//            var gradyear: Int = gradYearField.getText().toInt();
+            var gradyear: Int = gradYearField.getText().toString().toIntOrNull() ?: 0;
 
             person = Student(
                 name,
                 firstname,
-                Calendar.getInstance().apply {
-                    set(Calendar.YEAR, 1998)
-                    set(Calendar.MONTH, Calendar.APRIL)
-                    set(Calendar.DAY_OF_MONTH, 8)
-                },
+                birthday,
                 nationality,
                 university,
-                2,
+                gradyear,
                 email,
                 comment
             );
         }
 
-        Log.d("MainActivity", person.toString());
+        Log.d("Person", person.toString());
     }
 }

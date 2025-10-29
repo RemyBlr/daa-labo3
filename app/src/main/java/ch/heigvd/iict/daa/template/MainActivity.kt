@@ -19,14 +19,16 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.util.Log
 import android.widget.ArrayAdapter
+import androidx.activity.viewModels
 
 import java.util.Calendar
-
 import java.text.SimpleDateFormat
 import java.util.Locale
+import ch.heigvd.iict.daa.template.PersonViewModel
+
 class MainActivity : AppCompatActivity() {
 
-    private var person: Person? = null;
+    private val personViewModel: PersonViewModel by viewModels()
 
     // Common fields
     private lateinit var nameField: EditText
@@ -54,6 +56,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var okBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("Info", "CREATING ACTIVITY...")
+
         super.onCreate(savedInstanceState)
 
         // depuis android 15 (sdk 35), le mode edge2edge doit être activé
@@ -126,30 +130,38 @@ class MainActivity : AppCompatActivity() {
 
     // Load existing data into the Form (if any)
     fun onLoad() {
+        val person = personViewModel.person
+
+        Log.d("Info", "Retrieving existing data...\n - " + person + "\n" + (person == null).toString());
+
         if (person == null) return; // No data to load
 
-        nameField.setText(person?.name);
-        firstNameField.setText(person?.firstName);
-        //birthdayField.setText(person?.birthDay);
-        //nationalitySpinner.
-        emailField.setText(person?.email);
-        commentField.setText(person?.remark)
+        nameField.setText(person.name);
+        firstNameField.setText(person.firstName);
+        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        birthdayField.setText(format.format(person.birthDay.time))
+//        nationalitySpinner.setSelection(person.nationality)
+        nationalitySpinner.setSelection(0)
+        emailField.setText(person.email);
+        commentField.setText(person.remark)
 
-        if (person is Worker) {
-            workerChoice.isChecked = true
-            val worker = person as Worker;
-            companyField.setText(worker.company);
-            //sectorSpinner.setSelection(worker.sector);
-            experienceField.setText(worker.experienceYear.toString());
-        } else if (person is Student) {
-            studentChoice.isChecked = true
-            val student = person as Student;
-            universityField.setText(student.university);
-            gradYearField.setText(student.graduationYear.toString());
+        when (person) {
+            is Worker -> {
+                workerChoice.isChecked = true
+                companyField.setText(person.company)
+                sectorSpinner.setSelection(0)
+                experienceField.setText(person.experienceYear.toString())
+            }
+            is Student -> {
+                studentChoice.isChecked = true
+                universityField.setText(person.university)
+                gradYearField.setText(person.graduationYear.toString())
+            }
         }
     }
 
     private fun showWorkerFields() {
+        Log.d("Info", "Worker selected.");
         companyField.visibility = View.VISIBLE
         sectorSpinner.visibility = View.VISIBLE
         experienceField.visibility = View.VISIBLE
@@ -159,6 +171,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showStudentFields() {
+        Log.d("Info", "Student selected.");
         companyField.visibility = View.GONE
         sectorSpinner.visibility = View.GONE
         experienceField.visibility = View.GONE
@@ -169,7 +182,7 @@ class MainActivity : AppCompatActivity() {
 
     // Empty Form fields
     fun onCancel() {
-        Log.d("Cancel", "Emptying data from Form");
+        Log.d("Info", "Emptying data from Form");
 
         nameField.setText("")
         firstNameField.setText("")
@@ -184,10 +197,13 @@ class MainActivity : AppCompatActivity() {
         gradYearField.setText("")
         workerChoice.isChecked = false
         studentChoice.isChecked = false
+        personViewModel.person = null
     }
 
     // Display log of Person
     fun onValidate() {
+        Log.d("Info", "Checking input validity...");
+
         val name = nameField.text.toString()
         if (name.isBlank()) {
             nameField.error = "Name cannot be empty"
@@ -202,7 +218,7 @@ class MainActivity : AppCompatActivity() {
 
         val birthdayStr = birthdayField.text.toString()
         val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        format.isLenient = false 
+        format.isLenient = false
         val birthday: Calendar = Calendar.getInstance()
         try {
             val date = format.parse(birthdayStr)
@@ -226,41 +242,23 @@ class MainActivity : AppCompatActivity() {
 
         if (!workerChoice.isChecked && !studentChoice.isChecked) { return; }
 
-        val nationality: String = nationalitySpinner.selectedItem.toString();
+        val nationality: String = nationalitySpinner.selectedItem?.toString() ?: ""
         val comment: String = commentField.text.toString();
 
-        if (workerChoice.isChecked) {
-            var company: String = companyField.getText().toString();
-            var sector: String = sectorSpinner.selectedItem.toString();
-            var experience: Int = experienceField.getText().toString().toIntOrNull() ?: 0;
+        val newPerson: Person? = if (workerChoice.isChecked) {
+            val company = companyField.text.toString()
+            val sector = sectorSpinner.selectedItem?.toString() ?: ""
+            val experience = experienceField.text.toString().toIntOrNull() ?: 0
 
-            person = Worker(
-                name,
-                firstname,
-                birthday,
-                nationality,
-                company,
-                sector,
-                experience,
-                email,
-                comment
-            );
-        } else if (studentChoice.isChecked) {
-            var university: String = universityField.getText().toString();
-            var gradyear: Int = gradYearField.getText().toString().toIntOrNull() ?: 0;
+            Worker(name, firstname, birthday, nationality, company, sector, experience, email, comment)
+        } else if(studentChoice.isChecked) {
+            val university = universityField.text.toString()
+            val gradYear = gradYearField.text.toString().toIntOrNull() ?: 0
+            Student(name, firstname, birthday, nationality, university, gradYear, email, comment)
+        } else { null }
 
-            person = Student(
-                name,
-                firstname,
-                birthday,
-                nationality,
-                university,
-                gradyear,
-                email,
-                comment
-            );
-        }
+        personViewModel.person = newPerson
 
-        Log.d("Person", person.toString());
+        Log.d("Info", "Person created : \n\t" + personViewModel.person.toString());
     }
 }

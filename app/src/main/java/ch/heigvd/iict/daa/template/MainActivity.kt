@@ -7,6 +7,7 @@
 
 package ch.heigvd.iict.daa.labo3
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -19,6 +20,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.ImageButton
 import androidx.activity.viewModels
 
 import java.util.Calendar
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nameField: EditText
     private lateinit var firstNameField: EditText
     private lateinit var birthdayField: EditText
+    private lateinit var birthdayBtn: ImageButton
+    private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private lateinit var nationalitySpinner: Spinner
     private lateinit var emailField: EditText
     private lateinit var commentField: EditText
@@ -84,22 +88,31 @@ class MainActivity : AppCompatActivity() {
     fun initViews() {
         nameField = findViewById(R.id.lastNameField)
         firstNameField = findViewById(R.id.firstNameField)
+
         birthdayField = findViewById(R.id.birthdayField)
+        birthdayBtn = findViewById(R.id.birthdayBtn)
+
+        // Empêcher le clavier de s’ouvrir
+        birthdayField.showSoftInputOnFocus = false
+        birthdayField.isFocusable = false
+        birthdayField.isClickable = true
+
         nationalitySpinner = findViewById(R.id.nationalitySpinner)
         ArrayAdapter.createFromResource(
             this,
             R.array.nationalities,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
-            // Specify the layout to use when the list of choices appears.
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner.
             nationalitySpinner.adapter = adapter
         }
+
         emailField = findViewById(R.id.emailField)
         commentField = findViewById(R.id.commentField)
+
         workerChoice = findViewById(R.id.workerChoice)
         studentChoice = findViewById(R.id.studentChoice)
+
         companyField = findViewById(R.id.companyField)
         sectorSpinner = findViewById(R.id.sectorSpinner)
         ArrayAdapter.createFromResource(
@@ -107,42 +120,40 @@ class MainActivity : AppCompatActivity() {
             R.array.sectors,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
-            // Specify the layout to use when the list of choices appears.
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner.
             sectorSpinner.adapter = adapter
         }
+
         experienceField = findViewById(R.id.experienceField)
         universityField = findViewById(R.id.universityField)
         gradYearField = findViewById(R.id.gradYearField)
+
         cancelBtn = findViewById(R.id.cancelBtn)
         okBtn = findViewById(R.id.okBtn)
 
-        Log.d("Init", "Init view data");
-
-        // Setup listeners
+        // Setup listeners ------------------------------------
         cancelBtn.setOnClickListener { onCancel(); }
         okBtn.setOnClickListener { onValidate(); }
 
         workerChoice.setOnCheckedChangeListener { view, isChecked -> if(isChecked) showWorkerFields() }
         studentChoice.setOnCheckedChangeListener { view, isChecked -> if(isChecked) showStudentFields() }
+
+        // Ouvrir le DatePicker au clic sur champ ou bouton
+        birthdayField.setOnClickListener { openDatePickerDialog() }
+        birthdayBtn.setOnClickListener { openDatePickerDialog() }
     }
 
     // Load existing data into the Form (if any)
     fun onLoad() {
-        val person = personViewModel.person
+        val person = personViewModel.person ?: return // No data to load
 
         Log.d("Info", "Retrieving existing data...\n - " + person + "\n" + (person == null).toString());
 
-        if (person == null) return; // No data to load
-
-        nameField.setText(person.name);
-        firstNameField.setText(person.firstName);
-        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        birthdayField.setText(format.format(person.birthDay.time))
-//        nationalitySpinner.setSelection(person.nationality)
+        nameField.setText(person.name)
+        firstNameField.setText(person.firstName)
+        birthdayField.setText(dateFormat.format(person.birthDay.time))
         nationalitySpinner.setSelection(0)
-        emailField.setText(person.email);
+        emailField.setText(person.email)
         commentField.setText(person.remark)
 
         when (person) {
@@ -151,11 +162,13 @@ class MainActivity : AppCompatActivity() {
                 companyField.setText(person.company)
                 sectorSpinner.setSelection(0)
                 experienceField.setText(person.experienceYear.toString())
+                showWorkerFields()
             }
             is Student -> {
                 studentChoice.isChecked = true
                 universityField.setText(person.university)
                 gradYearField.setText(person.graduationYear.toString())
+                showStudentFields()
             }
         }
     }
@@ -198,67 +211,102 @@ class MainActivity : AppCompatActivity() {
         workerChoice.isChecked = false
         studentChoice.isChecked = false
         personViewModel.person = null
+
+        companyField.visibility = View.GONE
+        sectorSpinner.visibility = View.GONE
+        experienceField.visibility = View.GONE
+        universityField.visibility = View.GONE
+        gradYearField.visibility = View.GONE
     }
 
     // Display log of Person
-    fun onValidate() {
-        Log.d("Info", "Checking input validity...");
+    private fun onValidate() {
+        Log.d("Info", "Checking input validity...")
 
         val name = nameField.text.toString()
         if (name.isBlank()) {
             nameField.error = "Name cannot be empty"
-            return;
+            return
         }
 
         val firstname = firstNameField.text.toString()
         if (firstname.isBlank()) {
             firstNameField.error = "First name cannot be empty"
-            return;
+            return
         }
 
         val birthdayStr = birthdayField.text.toString()
-        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        format.isLenient = false
-        val birthday: Calendar = Calendar.getInstance()
+        val birthday = Calendar.getInstance()
         try {
-            val date = format.parse(birthdayStr)
-            if (date != null) {
-                birthday.time = date
-            } else {
+            val date = dateFormat.parse(birthdayStr)
+            if (date != null) birthday.time = date
+            else {
                 birthdayField.error = "Invalid date format (dd/MM/yyyy)"
-                return;
+                return
             }
         } catch (e: Exception) {
             birthdayField.error = "Invalid date format (dd/MM/yyyy)"
-            return;
+            return
         }
-
 
         val email = emailField.text.toString()
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailField.error = "Invalid email address";
-            return;
+            emailField.error = "Invalid email address"
+            return
         }
 
-        if (!workerChoice.isChecked && !studentChoice.isChecked) { return; }
+        if (!workerChoice.isChecked && !studentChoice.isChecked) {
+            return
+        }
 
-        val nationality: String = nationalitySpinner.selectedItem?.toString() ?: ""
-        val comment: String = commentField.text.toString();
+        val nationality = nationalitySpinner.selectedItem?.toString() ?: ""
+        val comment = commentField.text.toString()
 
-        val newPerson: Person? = if (workerChoice.isChecked) {
+        val newPerson: Person = if (workerChoice.isChecked) {
             val company = companyField.text.toString()
             val sector = sectorSpinner.selectedItem?.toString() ?: ""
             val experience = experienceField.text.toString().toIntOrNull() ?: 0
-
             Worker(name, firstname, birthday, nationality, company, sector, experience, email, comment)
-        } else if(studentChoice.isChecked) {
+        } else {
             val university = universityField.text.toString()
             val gradYear = gradYearField.text.toString().toIntOrNull() ?: 0
             Student(name, firstname, birthday, nationality, university, gradYear, email, comment)
-        } else { null }
+        }
 
         personViewModel.person = newPerson
+        Log.d("Info", "Person created:\n\t${personViewModel.person}")
+    }
 
-        Log.d("Info", "Person created : \n\t" + personViewModel.person.toString());
+    // Source: https://www.geeksforgeeks.org/android/datepickerdialog-in-android/
+    private fun openDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+
+        // Si une date est déjà saisie, la reprendre
+        val currentText = birthdayField.text.toString()
+        if (currentText.isNotEmpty()) {
+            try {
+                val date = dateFormat.parse(currentText)
+                if (date != null) calendar.time = date
+            } catch (_: Exception) {}
+        }
+
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePicker = DatePickerDialog(
+            this,
+            { _, year, month, day -> {
+                val calendar = Calendar.getInstance()
+                calendar.set(year, month, day)
+                birthdayField.setText(dateFormat.format(calendar.time))
+             }
+            },
+            year,
+            month,
+            day
+        )
+
+        datePicker.show()
     }
 }

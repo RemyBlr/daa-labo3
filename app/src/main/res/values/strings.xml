@@ -84,5 +84,6 @@
     <string name="hint_date">e.g 01/01/2000</string>
     <string name="hint_email">e.g john.smith@gmail.com</string>
     <string name="hint_comment">Commentaires supplémentaires</string>
+    <string name="nationality_spinner_description">Select your nationality</string>
 
 </resources>

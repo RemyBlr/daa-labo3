@@ -1,3 +1,10 @@
+/**
+ * DAA - labo3
+ * Auteurs : Bleuer Rémy, Changanaqui Yoann, Rajadurai Thirusan
+ * Date : 21.10.2025
+ * Description : Classes de modèle représentant les personnes (étudiants et employés)
+ */
+
 package ch.heigvd.iict.daa.labo3
 
 import java.text.DateFormat

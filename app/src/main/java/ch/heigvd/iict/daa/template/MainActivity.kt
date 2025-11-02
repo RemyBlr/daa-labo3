@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var birthdayField: EditText
     private lateinit var birthdayBtn: ImageButton
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    private var datePickerDialog: DatePickerDialog? = null
     private lateinit var nationalitySpinner: Spinner
     private lateinit var emailField: EditText
     private lateinit var commentField: EditText
@@ -325,6 +326,7 @@ class MainActivity : AppCompatActivity() {
                 val calendar = Calendar.getInstance()
                 calendar.set(year, month, day)
                 birthdayField.setText(dateFormat.format(calendar.time))
+                datePickerDialog = null // supprimer l'ancienne référence
             },
             year,
             month,
@@ -334,6 +336,17 @@ class MainActivity : AppCompatActivity() {
         // empêcher la sélection d'une date future
         datePicker.datePicker.maxDate = System.currentTimeMillis()
 
+        // En cas d'anulation supprimer cette référence
+        datePicker.setOnCancelListener {
+            datePickerDialog = null
+        }
+        datePickerDialog = datePicker
+
         datePicker.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        datePickerDialog?.dismiss()
     }
 }

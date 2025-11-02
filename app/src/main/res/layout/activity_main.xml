@@ -401,6 +401,8 @@
             <!--                          Données complémentaires                                -->
             <!-- /////////////////////////////////////////////////////////////////////////////// -->
 
+            <!-- Barrière horizontal qui permet l'affichage correcte des données complémentaires
+                 en dessous des champs (dynamiques) Student ou Worker -->
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/specificFieldsBarrier"
                 android:layout_width="wrap_content"

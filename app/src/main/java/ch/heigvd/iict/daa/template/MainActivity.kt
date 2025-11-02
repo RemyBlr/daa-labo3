@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
+import android.widget.AdapterView
 
 import java.util.Calendar
 import java.text.SimpleDateFormat
@@ -30,6 +31,10 @@ import java.util.Locale
 import ch.heigvd.iict.daa.template.PersonViewModel
 import org.w3c.dom.Text
 
+/**
+ * Activité principale de l'application permettant la saisie d'informations
+ * sur une personne (étudiant ou employé).
+ */
 class MainActivity : AppCompatActivity() {
 
     private val personViewModel: PersonViewModel by viewModels()
@@ -44,6 +49,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nationalitySpinner: Spinner
     private lateinit var emailField: EditText
     private lateinit var commentField: EditText
+
+    private var isNationalityValid = false
+    private var isSectorValid = false
 
     // Student or Worker selection
     private lateinit var studentChoice: RadioButton
@@ -93,6 +101,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Get fields components from the activity and set listeners to button
+    /**
+     * Initialise les composants de l'interface et configure les listeners.
+     */
     fun initViews() {
         nameField = findViewById(R.id.lastNameField)
         firstNameField = findViewById(R.id.firstNameField)
@@ -119,6 +130,15 @@ class MainActivity : AppCompatActivity() {
             nationalitySpinner.adapter = adapter
         }
 
+        //Vérification de la nationalité au changement
+        nationalitySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                isNationalityValid = position > 0
+                updateOkButtonState()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
         emailField = findViewById(R.id.emailField)
         commentField = findViewById(R.id.commentField)
 
@@ -136,6 +156,15 @@ class MainActivity : AppCompatActivity() {
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             sectorSpinner.adapter = adapter
+        }
+
+        //Vérification du secteur au changement
+        sectorSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                isSectorValid = position > 0
+                updateOkButtonState()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
         experienceLabel = findViewById(R.id.experienceLabel)
         experienceField = findViewById(R.id.experienceField)
@@ -160,6 +189,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Load existing data into the Form (if any)
+    /**
+     * Charge les données existantes dans le formulaire si disponibles.
+     */
     fun onLoad() {
         val person = personViewModel.person ?: return // No data to load
 
@@ -189,6 +221,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Affiche les champs spécifiques aux employés et masque ceux des étudiants.
+     */
     private fun showWorkerFields() {
         Log.d("Info", "Worker selected.");
         companyLabel.visibility = View.VISIBLE
@@ -204,6 +239,9 @@ class MainActivity : AppCompatActivity() {
         gradYearField.visibility = View.GONE
     }
 
+    /**
+     * Affiche les champs spécifiques aux étudiants et masque ceux des employés.
+     */
     private fun showStudentFields() {
         Log.d("Info", "Student selected.");
         companyLabel.visibility = View.GONE
@@ -219,7 +257,21 @@ class MainActivity : AppCompatActivity() {
         gradYearField.visibility = View.VISIBLE
     }
 
+    /**
+     * Met à jour l'état du bouton OK en fonction de la validité des spinners.
+     */
+    private fun updateOkButtonState() {
+        okBtn.isEnabled = if (workerChoice.isChecked) {
+            isNationalityValid && isSectorValid
+        } else {
+            isNationalityValid
+        }
+    }
+
     // Empty Form fields
+    /**
+     * Vide tous les champs du formulaire et réinitialise l'état.
+     */
     fun onCancel() {
         Log.d("Info", "Emptying data from Form");
 
@@ -238,6 +290,10 @@ class MainActivity : AppCompatActivity() {
         studentChoice.isChecked = false
         personViewModel.person = null
 
+        isNationalityValid = false
+        isSectorValid = false
+        updateOkButtonState()
+
         companyField.visibility = View.GONE
         sectorSpinner.visibility = View.GONE
         experienceField.visibility = View.GONE
@@ -246,6 +302,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Display log of Person
+    /**
+     * Valide les données du formulaire et crée un objet Person si tout est correct.
+     */
     private fun onValidate() {
         Log.d("Info", "Checking input validity...")
 
@@ -281,7 +340,15 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        if (nationalitySpinner.selectedItemPosition == 0) {
+            return
+        }
+
         if (!workerChoice.isChecked && !studentChoice.isChecked) {
+            return
+        }
+
+        if (workerChoice.isChecked && sectorSpinner.selectedItemPosition == 0) {
             return
         }
 

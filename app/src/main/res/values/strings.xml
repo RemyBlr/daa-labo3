@@ -13,6 +13,7 @@
     <string name="main_base_occupation_worker">Employé</string>
 
     <string-array translatable="false" name="nationalities">
+        <item>@string/nationality_empty</item>
         <item>@string/ch</item>
         <item>@string/fr</item>
         <item>@string/de</item>
@@ -24,7 +25,6 @@
     <string name="fr">Française</string>
     <string name="de">Allemande</string>
     <string name="it">Italienne</string>
-    <!-- ... -->
 
     <string name="main_specific_students_title">Données spécifiques (étudiants)</string>
     <string name="main_specific_school_title">Ecole/Université</string>
@@ -37,6 +37,7 @@
 
     <string name="sectors_empty">Sélectionner</string>
     <string-array name="sectors">
+        <item>@string/sectors_empty</item>
         <item>@string/agriculture</item>
         <item>@string/art</item>
         <item>@string/construction</item>

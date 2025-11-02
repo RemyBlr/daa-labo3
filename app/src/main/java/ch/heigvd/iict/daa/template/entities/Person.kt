@@ -1,15 +1,26 @@
+/**
+ * DAA - labo3
+ * Auteurs : Bleuer Rémy, Changanaqui Yoann, Rajadurai Thirusan
+ * Date : 21.10.2025
+ * Description : Classes de modèle représentant les personnes (étudiants et employés)
+ */
+
 package ch.heigvd.iict.daa.labo3
 
 import java.text.DateFormat
 import java.util.*
 
-/*
- *  Nous définissons ici les deux classes, Worker et Student, qui représentent le modèle de
- *  notre application. Celles-ci héritent de la classe Person qui est abstraite.
- *  Malheureusement en Kotlin, les data class ne permettent pas l’héritage…
- *  Nous fournissons également deux exemples, un étudiant et une employée
+/**
+ * Classe abstraite représentant une personne.
+ * Sert de classe de base pour Student et Worker.
+ *
+ * @property name Nom de famille
+ * @property firstName Prénom
+ * @property birthDay Date de naissance
+ * @property nationality Nationalité
+ * @property email Adresse email
+ * @property remark Commentaires supplémentaires
  */
-
 abstract class Person(var name: String,
                       var firstName: String,
                       var birthDay : Calendar,
@@ -17,6 +28,11 @@ abstract class Person(var name: String,
                       var email : String,
                       var remark : String) {
 
+    /**
+     * Retourne une représentation textuelle des attributs de la classe de base Person.
+     *
+     * @return String contenant les informations de base de la personne
+     */
     protected fun superToString(): String {
         return "name: $name, firstName: $firstName, birthDay: ${dateFormatter.format(birthDay.time)}, nationality: $nationality, email: $email, remark: $remark"
     }
@@ -57,6 +73,12 @@ abstract class Person(var name: String,
 
 }
 
+/**
+ * Classe représentant un étudiant.
+ *
+ * @property university Nom de l'université ou école
+ * @property graduationYear Année du diplôme
+ */
 class Student(name: String,
               firstName: String,
               birthDay : Calendar,
@@ -71,6 +93,13 @@ class Student(name: String,
     }
 }
 
+/**
+ * Classe représentant un employé.
+ *
+ * @property company Nom de l'entreprise
+ * @property sector Secteur d'activité
+ * @property experienceYear Années d'expérience
+ */
 class Worker(name: String,
              firstName: String,
              birthDay : Calendar,

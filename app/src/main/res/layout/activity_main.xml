@@ -136,7 +136,7 @@
                 android:id="@+id/birthdayField"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:focusable="true"
+                android:focusable="false"
                 android:clickable="true"
                 android:inputType="none"
                 android:layout_marginTop="8dp"
@@ -401,6 +401,15 @@
             <!--                          Données complémentaires                                -->
             <!-- /////////////////////////////////////////////////////////////////////////////// -->
 
+            <!-- Barrière horizontal qui permet l'affichage correcte des données complémentaires
+                 en dessous des champs (dynamiques) Student ou Worker -->
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/specificFieldsBarrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="gradYearField,experienceField" />
+
             <!-- Titre -->
             <TextView
                 android:id="@+id/additionalTitle"
@@ -412,7 +421,7 @@
                 android:paddingVertical="8dp"
                 android:layout_marginTop="16dp"
                 android:textAllCaps="true"
-                app:layout_constraintTop_toBottomOf="@id/gradYearField"
+                app:layout_constraintTop_toBottomOf="@id/specificFieldsBarrier"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -459,7 +468,7 @@
                 android:id="@+id/commentField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine|textCapSentences"
+                android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
                 android:minLines="3"
                 android:gravity="top|start"
                 android:imeOptions="actionDone"

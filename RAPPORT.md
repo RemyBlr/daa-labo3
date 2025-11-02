@@ -77,11 +77,6 @@ utilisateur fluide de champ en champ et finalement vers la validation.
 > corresponde au choix null, affichant par exemple le label « Sélectionner » ? Comment peut-on gérer cette valeur pour ne
 > pas qu’elle soit confondue avec une réponse ?
 
-Pour les deux `Spinner` (nationalité et secteur d’activité), si on veut que le premier élément corresponde à une valeur
-« non sélectionnée » (par exemple le libellé « Sélectionner »), on peut définir dans le fichier `strings.xml` un élément
-« Sélectionner… » ou « – Choisir– ». On crée un tableau (`string-array`) dont le premier élément est ce libellé. Lors de
-l’adaptation via `ArrayAdapter`, ce premier élément apparaît comme choix « vide » ou « non défini ».
-Ensuite dans le code, lors de la validation on vérifie que `spinner.selectedItemPosition != 0`
-(ou que `selectedItem.toString() != "Sélectionner…"`) pour savoir si une vraie valeur a été choisie.
-On peut en plus faire en sorte que lorsque le formulaire est initialisé, `spinner.setSelection(0)` soit la
-valeur « non sélectionnée ». Donc cette approche évite que le premier élément soit confondu avec une réponse réelle.
+Pour les deux `Spinner` (nationalité et secteur d’activité), nous avons ajouté un élément par défaut dans la string-array en position 0, qui a pour texte "Sélectionner".
+Ensuite dans le code, lors d'un changement de sélection, on vérifie et mets à jour le flag de validation pour le spinner en question.
+Pour simplifier la gestion d'erreur sans pop-up dérangeant, nous avons choisi de désactiver le bouton de validation tant que tous les flags des spinners ne soient pas valides.

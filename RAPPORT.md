@@ -187,6 +187,8 @@ Pour simplifier la gestion d'erreur sans pop-up dérangeant, nous avons choisi d
 
 ## Utilisation d'outils AI
 
+L'IA a été utilisée partiellement pour des vérifications mineures telles que l'orthographe, la grammaire, l'entrée d'informations redondantes *(onCancel())*. Elle a été évitée au maximum dans la réalisation de ce laboratoire pour des raisons pédagogiques. 
+
 Nous avons utilisé GitHub Copilot pour :
 - L'autocomplétion de code répétitif (findViewById, configuration des adapters)
 - La génération de la documentation KDoc
@@ -194,6 +196,8 @@ Nous avons utilisé GitHub Copilot pour :
 - La structuration de ce rapport
 
 L'ensemble de la logique métier, de l'architecture et des choix d'implémentation ont été réalisés par le groupe sans assistance AI.
+
+D'autres sources ont pu être consultées ici et là, notamment **GeeksforGeeks** et leurs exemples de `DatePickerDialog`.
 
 ---
 

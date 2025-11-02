@@ -21,12 +21,14 @@ import androidx.core.view.WindowInsetsCompat
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.activity.viewModels
 
 import java.util.Calendar
 import java.text.SimpleDateFormat
 import java.util.Locale
 import ch.heigvd.iict.daa.template.PersonViewModel
+import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,12 +49,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var workerChoice: RadioButton
 
     // Worker fields
+    private lateinit var companyLabel: TextView
     private lateinit var companyField: EditText
+    private lateinit var sectorLabel: TextView
     private lateinit var sectorSpinner: Spinner
+    private lateinit var experienceLabel: TextView
     private lateinit var experienceField: EditText
 
     // Student fields
+        private lateinit var universityLabel : TextView
     private lateinit var universityField: EditText
+    private lateinit var gradYearLabel : TextView
     private lateinit var gradYearField: EditText
 
     // Buttons
@@ -91,6 +98,10 @@ class MainActivity : AppCompatActivity() {
 
         birthdayField = findViewById(R.id.birthdayField)
         birthdayBtn = findViewById(R.id.birthdayBtn)
+        if(birthdayField.text.isEmpty()) {
+            val today = Calendar.getInstance()
+            birthdayField.setText(dateFormat.format(today.time))
+        }
 
         // Empêcher le clavier de s’ouvrir
         birthdayField.showSoftInputOnFocus = false
@@ -113,7 +124,9 @@ class MainActivity : AppCompatActivity() {
         workerChoice = findViewById(R.id.workerChoice)
         studentChoice = findViewById(R.id.studentChoice)
 
+        companyLabel = findViewById(R.id.companyLabel)
         companyField = findViewById(R.id.companyField)
+        sectorLabel = findViewById(R.id.sectorLabel)
         sectorSpinner = findViewById(R.id.sectorSpinner)
         ArrayAdapter.createFromResource(
             this,
@@ -123,9 +136,11 @@ class MainActivity : AppCompatActivity() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             sectorSpinner.adapter = adapter
         }
-
+        experienceLabel = findViewById(R.id.experienceLabel)
         experienceField = findViewById(R.id.experienceField)
+        universityLabel = findViewById(R.id.universityLabel)
         universityField = findViewById(R.id.universityField)
+        gradYearLabel = findViewById(R.id.gradYearLabel)
         gradYearField = findViewById(R.id.gradYearField)
 
         cancelBtn = findViewById(R.id.cancelBtn)
@@ -175,21 +190,31 @@ class MainActivity : AppCompatActivity() {
 
     private fun showWorkerFields() {
         Log.d("Info", "Worker selected.");
+        companyLabel.visibility = View.VISIBLE
         companyField.visibility = View.VISIBLE
+        sectorLabel.visibility = View.VISIBLE
         sectorSpinner.visibility = View.VISIBLE
+        experienceLabel.visibility = View.VISIBLE
         experienceField.visibility = View.VISIBLE
 
+        universityLabel.visibility = View.GONE
         universityField.visibility = View.GONE
+        gradYearLabel.visibility = View.GONE
         gradYearField.visibility = View.GONE
     }
 
     private fun showStudentFields() {
         Log.d("Info", "Student selected.");
+        companyLabel.visibility = View.GONE
         companyField.visibility = View.GONE
+        sectorLabel.visibility = View.GONE
         sectorSpinner.visibility = View.GONE
+        experienceLabel.visibility = View.GONE
         experienceField.visibility = View.GONE
 
+        universityLabel.visibility = View.VISIBLE
         universityField.visibility = View.VISIBLE
+        gradYearLabel.visibility = View.VISIBLE
         gradYearField.visibility = View.VISIBLE
     }
 
@@ -296,16 +321,18 @@ class MainActivity : AppCompatActivity() {
 
         val datePicker = DatePickerDialog(
             this,
-            { _, year, month, day -> {
+            { _, year, month, day ->
                 val calendar = Calendar.getInstance()
                 calendar.set(year, month, day)
                 birthdayField.setText(dateFormat.format(calendar.time))
-             }
             },
             year,
             month,
             day
         )
+
+        // empêcher la sélection d'une date future
+        datePicker.datePicker.maxDate = System.currentTimeMillis()
 
         datePicker.show()
     }

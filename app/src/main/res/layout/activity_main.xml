@@ -401,6 +401,13 @@
             <!--                          Données complémentaires                                -->
             <!-- /////////////////////////////////////////////////////////////////////////////// -->
 
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/specificFieldsBarrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="gradYearField,experienceField" />
+
             <!-- Titre -->
             <TextView
                 android:id="@+id/additionalTitle"
@@ -412,7 +419,7 @@
                 android:paddingVertical="8dp"
                 android:layout_marginTop="16dp"
                 android:textAllCaps="true"
-                app:layout_constraintTop_toBottomOf="@id/gradYearField"
+                app:layout_constraintTop_toBottomOf="@id/specificFieldsBarrier"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 

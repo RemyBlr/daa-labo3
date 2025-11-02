@@ -294,10 +294,15 @@ class MainActivity : AppCompatActivity() {
         isSectorValid = false
         updateOkButtonState()
 
+        companyLabel.visibility = View.GONE
         companyField.visibility = View.GONE
+        sectorLabel.visibility = View.GONE
         sectorSpinner.visibility = View.GONE
+        experienceLabel.visibility = View.GONE
         experienceField.visibility = View.GONE
+        universityLabel.visibility = View.GONE
         universityField.visibility = View.GONE
+        gradYearLabel.visibility = View.GONE
         gradYearField.visibility = View.GONE
     }
 
